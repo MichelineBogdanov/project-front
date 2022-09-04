@@ -1,4 +1,5 @@
-<html>
+<html lang="en">
+
 <head>
     <title>RPG</title>
     <script src=https://code.jquery.com/jquery-3.6.0.min.js></script>
@@ -6,6 +7,39 @@
 </head>
 <body>
 <h1>RPG admin panel</h1>
-
+<br>
+<div>
+    <label>Count per page:</label><select id="countOfPlayersSelect">
+    <option>4</option>
+    <option selected>5</option>
+    <option>10</option>
+    <option>20</option>
+</select>
+</div>
+<br>
+<table id="accountTable" class="table">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Title</th>
+        <th>Race</th>
+        <th>Profession</th>
+        <th>Level</th>
+        <th>Birthday</th>
+        <th>Banned</th>
+    </tr>
+    <thead/>
+    <tbody id="tableBody"></tbody>
+</table>
+<script src="/js/my.js"></script>
+<br>
+<div id="pagesButton">
+    Pages:
+    <button>1</button>
+    <button>2</button>
+    <button>3</button>
+    <button>4</button>
+</div>
 </body>
 </html>
