@@ -28,12 +28,111 @@
         <th>Level</th>
         <th>Birthday</th>
         <th>Banned</th>
+        <th>Edit</th>
+        <th>Delete</th>
     </tr>
     <thead/>
     <tbody id="tableBody"></tbody>
 </table>
-<script src="/js/my.js"></script>
 <br>
 <div id="pagesButton"></div>
+<hr id="separator">
+<h2>Create new account:</h2>
+<form id="createAccountForm">
+    <table id="createAccountTable">
+        <tbody>
+        <tr id="createName">
+            <td>
+                <label for="inputName">Name:</label>
+            </td>
+            <td>
+                <input
+                        name="name"
+                        id="inputName"
+                        minlength="1"
+                        maxlength="12"
+                        pattern="^[\u0400-\u04ffa-zA-Z][\u0400-\u04ffa-zA-Z\s]{1,10}[\u0400-\u04ffa-zA-Z]$"
+                        placeholder="3-12 cyrillic latin"
+                        required
+                >
+            </td>
+        </tr>
+        <tr id="createTitle">
+            <td>
+                <label for="inputTitle">Title:</label>
+            </td>
+            <td>
+                <input
+                        name="title"
+                        id="inputTitle"
+                        minlength="1"
+                        maxlength="30"
+                        pattern="^[\u0400-\u04ffa-zA-Z][\u0400-\u04ffa-zA-Z_\s.,:]{1,28}[\u0400-\u04ffa-zA-Z.]$"
+                        placeholder="3-30 cyrillic latin .,:"
+                        required
+                >
+            </td>
+        </tr>
+        <tr id="createRace">
+            <td>
+                <label for="selectRace">Race:</label>
+            </td>
+            <td>
+                <select name="race" id="selectRace"></select>
+            </td>
+        </tr>
+        <tr id="createProfession">
+            <td>
+                <label for="selectProfession">Profession:</label>
+            </td>
+            <td>
+                <select name="profession" id="selectProfession"></select>
+            </td>
+        </tr>
+        <tr id="createBirthday">
+            <td>
+                <label for="inputBirthday">Birthday:</label>
+            </td>
+            <td>
+                <input
+                        name="birthday"
+                        id="inputBirthday"
+                        type="date"
+                        min="2000-01-01"
+                        max="3000-12-31"
+                        required
+                >
+            </td>
+        </tr>
+        <tr id="createBanned">
+            <td>
+                <label for="selectBanned">Banned:</label>
+            </td>
+            <td>
+                <select name="banned" id="selectBanned"></select>
+            </td>
+        </tr>
+        <tr id="createLevel">
+            <td>
+                <label for="inputLevel">Level:</label>
+            </td>
+            <td>
+                <input
+                        name="level"
+                        id="inputLevel"
+                        type="number"
+                        min="0"
+                        max="100"
+                        placeholder="0-100"
+                        required
+                >
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <button id="createAccountButton">Create!</button>
+</form>
+</body>
+<script src="/js/my.js"></script>
 </body>
 </html>
