@@ -4,10 +4,13 @@ const tableHead = ['id', 'Name', 'Title', 'Race', 'Profession', 'Level', 'Birthd
 const races = ['DWARF', 'ELF', 'GIANT', 'HUMAN', 'ORC', 'TROLL', 'HOBBIT'];
 const professions = ['CLERIC', 'DRUID', 'NAZGUL', 'PALADIN', 'ROGUE', 'SORCERER', 'WARLOCK', 'WARRIOR'];
 const selectMenu = document.querySelector('select[id=countOfPlayersSelect]');
+const selectRace = document.getElementById('selectRace');
+const selectProfession = document.getElementById('selectProfession');
+const selectBanned = document.getElementById('selectBanned');
 let pageNumber = 0;
-const imgEditSrc = "img/edit.png";
-const imgDeleteSrc = "img/delete.png";
-const imgSaveSrc = "img/save.png";
+const imgEditSrc = 'img/edit.png';
+const imgDeleteSrc = 'img/delete.png';
+const imgSaveSrc = 'img/save.png';
 const banned = ['false', 'true'];
 
 //"main"
@@ -15,6 +18,7 @@ putDataInTableBody('GET', requestURL
     + '?pageNumber=0'
     + '&pageSize=' + getNumberOfPagesFromSelect());
 createPageButtons();
+drawAccountCreator();
 
 function sendRequest(method, url, body = null) {
     return new Promise((resolve, reject) => {
@@ -41,11 +45,11 @@ function createPageButtons() {
     let newButtons = [];
     sendRequest('GET', requestURLForCount)
         .then(data => {
-            let countOfPages = data / getNumberOfPagesFromSelect();
+            let countOfPages = Math.ceil(data / getNumberOfPagesFromSelect());
             for (let i = 1; i <= countOfPages; i++) {
                 let button = document.createElement('button');
                 button.innerText = String(i);
-                button.setAttribute('id', i - 1);
+                button.setAttribute('id', (i - 1));
                 button.setAttribute('onclick', 'pagesButtonClick(this);');
                 if (i === 1) {
                     button.setAttribute('class', 'btn active');
@@ -114,7 +118,7 @@ function transformBDay(day) {
 }
 
 function getNumberOfPagesFromSelect() {
-    let list = document.getElementById("countOfPlayersSelect");
+    let list = document.getElementById('countOfPlayersSelect');
     return list.options[list.selectedIndex].value;
 }
 
@@ -128,11 +132,11 @@ selectMenu.onchange = function () {
 
 function pagesButtonClick(button) {
     let currentPage = document.getElementById(pageNumber);
-    currentPage.className = "btn";
+    currentPage.className = 'btn';
     putDataInTableBody('GET', requestURL
         + '?pageNumber=' + button.id
         + '&pageSize=' + getNumberOfPagesFromSelect());
-    button.className += " active";
+    button.className += ' active';
     pageNumber = button.id;
 }
 
@@ -174,12 +178,23 @@ function imgEditClick(element) {
 }
 
 function imgDeleteClick(element) {
+    let tBody = document.getElementById('tableBody');
+    const isLastRow = tBody.childElementCount === 1;
+    const isNotLastPage = window.pageNumber > 0;
     let id = getNeededTextAfterClickingTheRow(element, 0);
-    sendRequest('DELETE', requestURL + '/' + id)
-        .then(() => putDataInTableBody('GET', requestURL
-            + '?pageNumber=' + pageNumber
-            + '&pageSize=' + getNumberOfPagesFromSelect()));
-    createPageButtons();
+    if (isLastRow && isNotLastPage) {
+        sendRequest('DELETE', requestURL + '/' + id)
+            .then(() => putDataInTableBody('GET', requestURL
+                + '?pageNumber=' + (pageNumber - 1)
+                + '&pageSize=' + getNumberOfPagesFromSelect()));
+        createPageButtons();
+    } else {
+        sendRequest('DELETE', requestURL + '/' + id)
+            .then(() => putDataInTableBody('GET', requestURL
+                + '?pageNumber=' + pageNumber
+                + '&pageSize=' + getNumberOfPagesFromSelect()));
+        createPageButtons();
+    }
 }
 
 function getElementRow(element) {
@@ -208,23 +223,23 @@ function createInputField(value, id) {
 }
 
 function createSelect(options, selectedOption, id) {
-    const select = document.createElement('select')
+    const select = document.createElement('select');
     select.id = id;
     for (let index = 0; index < options.length; index++) {
-        const option = document.createElement('option')
+        const option = document.createElement('option');
         option.innerText = options[index];
         select.add(option);
         if (options[index] === selectedOption) {
-            select.selectedIndex = index
+            select.selectedIndex = index;
         }
     }
-    return select
+    return select;
 }
 
-/*function drawAccountCreator() {
-    selectRace.innerHTML = (createSelect(races).innerHTML)
-    selectProfession.innerHTML = (createSelect(professions).innerHTML)
-    selectBanned.innerHTML = (createSelect(banned).innerHTML)
+function drawAccountCreator() {
+    selectRace.innerHTML = (createSelect(races).innerHTML);
+    selectProfession.innerHTML = (createSelect(professions).innerHTML);
+    selectBanned.innerHTML = (createSelect(banned).innerHTML);
     document.getElementById('createAccountForm')
         .addEventListener('submit', submitForm);
 }
@@ -236,15 +251,16 @@ function submitForm(event) {
     formData.forEach((value, key) => {
         body[key] = value;
         if (key === 'birthday') {
-            const birthday = document.getElementById("inputBirthday")
-            body[key] = birthday.valueAsNumber
+            const birthday = document.getElementById("inputBirthday");
+            body[key] = birthday.valueAsNumber;
         }
     });
-    sendRequest('POST', accountsURL, body)
+    sendRequest('POST', requestURL, body)
         .then(() => putDataInTableBody('GET', requestURL
             + '?pageNumber=' + pageNumber
-            + '&pageSize=' + getNumberOfPagesFromSelect()))
-    clearInput()
+            + '&pageSize=' + getNumberOfPagesFromSelect()));
+    createPageButtons();
+    clearInput();
 }
 
 function clearInput() {
@@ -254,9 +270,9 @@ function clearInput() {
     }
     const formSelect = document.querySelectorAll('#createAccountTable select');
     for (const select of formSelect) {
-        select.selectedIndex = "0"
+        select.selectedIndex = "0";
     }
-}*/
+}
 
 
 
