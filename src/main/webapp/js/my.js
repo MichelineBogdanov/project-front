@@ -51,7 +51,7 @@ function createPageButtons() {
                 button.innerText = String(i);
                 button.setAttribute('id', (i - 1));
                 button.setAttribute('onclick', 'pagesButtonClick(this);');
-                if (i === 1) {
+                if (i === pageNumber + 1) {
                     button.setAttribute('class', 'btn active');
                 } else {
                     button.setAttribute('class', 'btn');
@@ -59,7 +59,8 @@ function createPageButtons() {
                 newButtons.push(button);
             }
             pagesButton.replaceChildren(...newButtons);
-        });
+        })
+        .catch((err) => console.log(err));
 }
 
 function putDataInTableBody(method, url) {
@@ -87,15 +88,18 @@ function putDataInTableBody(method, url) {
                 addIconsToTable(row, 'Delete', imgDeleteSrc);
                 newTBody.push(row);
             }
-        });
+        })
+        .catch((err) => console.log(err));
     tBody.replaceChildren(...newTBody);
 }
 
 function addIconsToTable(row, name, src) {
     let img = document.createElement('img');
     img.src = src;
+    let cell = row.cells[tableHead.indexOf(name)];
+    cell.setAttribute('class', 'imgButton');
     img.setAttribute('onclick', 'img' + name + 'Click(this);');
-    row.cells[tableHead.indexOf(name)].appendChild(img);
+    cell.appendChild(img);
 }
 
 function addRow(tableBody) {
@@ -123,11 +127,11 @@ function getNumberOfPagesFromSelect() {
 }
 
 selectMenu.onchange = function () {
+    pageNumber = 0;
     putDataInTableBody('GET', requestURL
-        + '?pageNumber=0'
+        + '?pageNumber=' + pageNumber
         + '&pageSize=' + getNumberOfPagesFromSelect());
     createPageButtons();
-    pageNumber = 0;
 }
 
 function pagesButtonClick(button) {
@@ -172,28 +176,33 @@ function imgEditClick(element) {
         sendRequest('POST', requestURL + '/' + id, body)
             .then(() => putDataInTableBody('GET', requestURL
                 + '?pageNumber=' + pageNumber
-                + '&pageSize=' + getNumberOfPagesFromSelect()));
-        createPageButtons();
+                + '&pageSize=' + getNumberOfPagesFromSelect()))
+            .then(() => createPageButtons())
+            .catch((err) => console.log(err));
     };
 }
 
 function imgDeleteClick(element) {
     let tBody = document.getElementById('tableBody');
     const isLastRow = tBody.childElementCount === 1;
-    const isNotLastPage = window.pageNumber > 0;
+    const isNotLastPage = pageNumber > 0;
     let id = getNeededTextAfterClickingTheRow(element, 0);
     if (isLastRow && isNotLastPage) {
         sendRequest('DELETE', requestURL + '/' + id)
             .then(() => putDataInTableBody('GET', requestURL
                 + '?pageNumber=' + (pageNumber - 1)
-                + '&pageSize=' + getNumberOfPagesFromSelect()));
-        createPageButtons();
+                + '&pageSize=' + getNumberOfPagesFromSelect()))
+            .then(() => pageNumber = pageNumber - 1)
+            .then(() => console.log(pageNumber))
+            .then(() => createPageButtons())
+            .catch((err) => console.log(err));
     } else {
         sendRequest('DELETE', requestURL + '/' + id)
             .then(() => putDataInTableBody('GET', requestURL
                 + '?pageNumber=' + pageNumber
-                + '&pageSize=' + getNumberOfPagesFromSelect()));
-        createPageButtons();
+                + '&pageSize=' + getNumberOfPagesFromSelect()))
+            .then(() => createPageButtons())
+            .catch((err) => console.log(err));
     }
 }
 
@@ -258,8 +267,9 @@ function submitForm(event) {
     sendRequest('POST', requestURL, body)
         .then(() => putDataInTableBody('GET', requestURL
             + '?pageNumber=' + pageNumber
-            + '&pageSize=' + getNumberOfPagesFromSelect()));
-    createPageButtons();
+            + '&pageSize=' + getNumberOfPagesFromSelect()))
+        .then(() => createPageButtons())
+        .catch((err) => console.log(err));
     clearInput();
 }
 
